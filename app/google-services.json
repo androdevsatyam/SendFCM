@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "214845271571",
+    "project_id": "dummynotfication",
+    "storage_bucket": "dummynotfication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214845271571:android:1bb913e35ca2c7cf7a19e6",
+        "android_client_info": {
+          "package_name": "com.devsatya.showfcm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABCiZvudk4LySHX8PYWjyJlfI3hfJmGbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214845271571:android:1bb913e35ca2c7cf7a19e6",
+        "android_client_info": {
+          "package_name": "com.devsatya.sendfcm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABCiZvudk4LySHX8PYWjyJlfI3hfJmGbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
