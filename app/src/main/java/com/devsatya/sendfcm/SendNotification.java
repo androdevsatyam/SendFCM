@@ -36,6 +36,7 @@ public class SendNotification extends AppCompatActivity {
     private EditText etDeviceToken;
     private Button btnSendNotification;
     private final String fcmUrl = "https://fcm.googleapis.com/v1/projects/" + Const.projectId + "/messages:send";
+    private final String TAG = "SendNotification";
     private JSONObject mainObj = new JSONObject();
     private JSONObject messageObj = new JSONObject();
     private JSONObject notificationObj = new JSONObject();
@@ -78,7 +79,7 @@ public class SendNotification extends AppCompatActivity {
 
         try {
             notificationObj.put("title", title);
-            notificationObj.put("message", message);
+            notificationObj.put("body", message);
             if (!TextUtils.isEmpty(imageUrl)) {
                 notificationObj.put("image", imageUrl);
             }
@@ -127,6 +128,7 @@ public class SendNotification extends AppCompatActivity {
             String token = new AccessToken().getAccessToken();
 
             RequestQueue requestQueue = Volley.newRequestQueue(this);
+            Log.d(TAG, "sendNotification: "+mainObj.toString());
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, fcmUrl, mainObj, response -> {
 
             }, volleyError -> {
