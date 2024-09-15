@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,18 +31,15 @@ import okhttp3.RequestBody;
 
 public class SendNotification extends AppCompatActivity {
 
-    private EditText etTitle;
-    private EditText etMessage;
-    private EditText etImageUrl;
-    private EditText etExtraFields;
+    private EditText etTitle, etMessage, etImageUrl, etExtraFields, etDeviceToken;
     private RadioGroup rgNotificationType;
-    private EditText etDeviceToken;
+    private Spinner spinner;
     private Button btnSendNotification;
     private final String fcmUrl = "https://fcm.googleapis.com/v1/projects/" + Const.projectId + "/messages:send";
     private final String TAG = "SendNotification";
-    private JSONObject mainObj = new JSONObject();
-    private JSONObject messageObj = new JSONObject();
-    private JSONObject notificationObj = new JSONObject();
+    private JSONObject mainObj = new JSONObject(), messageObj = new JSONObject(), notificationObj = new JSONObject();
+    String[] items = new String[]{"Please Select", "Demo User", "Full User", "Renewal User"};
+    String selectedTopic = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,16 +49,35 @@ public class SendNotification extends AppCompatActivity {
         etTitle = findViewById(R.id.etTitle);
         etMessage = findViewById(R.id.etMessage);
         etImageUrl = findViewById(R.id.etImageUrl);
+        spinner = findViewById(R.id.spinner);
         etExtraFields = findViewById(R.id.etExtraFields);
         rgNotificationType = findViewById(R.id.rgNotificationType);
         etDeviceToken = findViewById(R.id.etDeviceToken);
         btnSendNotification = findViewById(R.id.btnSendNotification);
 
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                selectedTopic = parentView.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
         rgNotificationType.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.rbSpecificDevice) {
                 etDeviceToken.setVisibility(View.VISIBLE);
-            } else {
+                spinner.setVisibility(View.GONE);
+            } else if (checkedId == R.id.rbTopic) {
                 etDeviceToken.setVisibility(View.GONE);
+                spinner.setVisibility(View.VISIBLE);
             }
         });
 
@@ -71,7 +90,9 @@ public class SendNotification extends AppCompatActivity {
         String imageUrl = etImageUrl.getText().toString();
         String extraFields = etExtraFields.getText().toString();
         int checkedRadioButtonId = rgNotificationType.getCheckedRadioButtonId();
-
+        mainObj = new JSONObject();
+        messageObj = new JSONObject();
+        notificationObj = new JSONObject();
         if (TextUtils.isEmpty(title) || TextUtils.isEmpty(message)) {
             Toast.makeText(this, "Title and Message cannot be empty", Toast.LENGTH_SHORT).show();
             return;
@@ -99,13 +120,16 @@ public class SendNotification extends AppCompatActivity {
             RequestBody body;
             switch (checkedRadioButtonId) {
                 case R.id.rbTopic:
-                    messageObj.put("to", "/topics/your_topic");
+                    if (selectedTopic.equals(items[0])) {
+                        Const.showToast(this, "Please select topic", Toast.LENGTH_SHORT);
+                        return;
+                    }
+                    messageObj.put("topic", getTopicName(selectedTopic));
                     messageObj.put("notification", notificationObj);
                     mainObj.put("message", messageObj);
-                    body = RequestBody.create(mainObj.toString(), jsonMediaType);
                     break;
                 case R.id.rbAllUsers:
-                    messageObj.put("to", "/topics/all");
+                    messageObj.put("topic", "all_users");
                     messageObj.put("notification", notificationObj);
                     mainObj.put("message", messageObj);
                     body = RequestBody.create(mainObj.toString(), jsonMediaType);
@@ -128,7 +152,7 @@ public class SendNotification extends AppCompatActivity {
             String token = new AccessToken().getAccessToken();
 
             RequestQueue requestQueue = Volley.newRequestQueue(this);
-            Log.d(TAG, "sendNotification: "+mainObj.toString());
+            Log.d(TAG, "sendNotification: " + mainObj.toString());
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, fcmUrl, mainObj, response -> {
 
             }, volleyError -> {
@@ -175,4 +199,15 @@ public class SendNotification extends AppCompatActivity {
         }
     }
 
+    private String getTopicName(String selectedTopic) {
+        if(selectedTopic.equals(items[1])){
+            return "demo_users";
+        }else if(selectedTopic.equals(items[2])){
+            return "full_users";
+        }else if(selectedTopic.equals(items[3])){
+            return "renewal_users";
+        }else{
+            return "";
+        }
+    }
 }
