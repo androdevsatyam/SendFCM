@@ -37,7 +37,7 @@ public class SendNotification extends AppCompatActivity {
     private Button btnSendNotification;
     private final String fcmUrl = "https://fcm.googleapis.com/v1/projects/" + Const.projectId + "/messages:send";
     private final String TAG = "SendNotification";
-    private JSONObject mainObj = new JSONObject(), messageObj = new JSONObject(), notificationObj = new JSONObject();
+    private JSONObject mainObj = new JSONObject(), messageObj = new JSONObject(), notificationObj = new JSONObject(), dataObj = new JSONObject();
     String[] items = new String[]{"Please Select", "Demo User", "Full User", "Renewal User"};
     String selectedTopic = "";
 
@@ -54,7 +54,6 @@ public class SendNotification extends AppCompatActivity {
         rgNotificationType = findViewById(R.id.rgNotificationType);
         etDeviceToken = findViewById(R.id.etDeviceToken);
         btnSendNotification = findViewById(R.id.btnSendNotification);
-
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -93,6 +92,7 @@ public class SendNotification extends AppCompatActivity {
         mainObj = new JSONObject();
         messageObj = new JSONObject();
         notificationObj = new JSONObject();
+        dataObj = new JSONObject();
         if (TextUtils.isEmpty(title) || TextUtils.isEmpty(message)) {
             Toast.makeText(this, "Title and Message cannot be empty", Toast.LENGTH_SHORT).show();
             return;
@@ -101,13 +101,22 @@ public class SendNotification extends AppCompatActivity {
         try {
             notificationObj.put("title", title);
             notificationObj.put("body", message);
+            dataObj.put("FCM_MSG_TITALE", title);
+            dataObj.put("FCM_MSG_TEXT", message);
             if (!TextUtils.isEmpty(imageUrl)) {
                 notificationObj.put("image", imageUrl);
+                dataObj.put("FCM_MSG_IMG", imageUrl);
+                dataObj.put("FCM_MSG_TYPE", "IMG_MSG");
+            } else {
+                dataObj.put("FCM_MSG_TYPE", "TEXT");
             }
             if (!TextUtils.isEmpty(extraFields)) {
                 try {
-                    JSONObject extraJson = new JSONObject(extraFields);
-                    notificationObj.put("data", extraJson);
+                    String[] extraJson = extraFields.split(",");
+                    for (String field : extraJson) {
+                        String[] keyValue = field.split(":");
+                        dataObj.put(keyValue[0], keyValue[1]);
+                    }
                 } catch (JSONException e) {
                     Toast.makeText(this, "Invalid JSON in extra fields", Toast.LENGTH_SHORT).show();
                     return;
@@ -125,12 +134,14 @@ public class SendNotification extends AppCompatActivity {
                         return;
                     }
                     messageObj.put("topic", getTopicName(selectedTopic));
-                    messageObj.put("notification", notificationObj);
+//                    messageObj.put("notification", notificationObj);
+                    messageObj.put("data", dataObj);
                     mainObj.put("message", messageObj);
                     break;
                 case R.id.rbAllUsers:
                     messageObj.put("topic", "all_users");
-                    messageObj.put("notification", notificationObj);
+//                    messageObj.put("notification", notificationObj);
+                    messageObj.put("data", dataObj);
                     mainObj.put("message", messageObj);
                     body = RequestBody.create(mainObj.toString(), jsonMediaType);
                     break;
@@ -141,7 +152,8 @@ public class SendNotification extends AppCompatActivity {
                         return;
                     }
                     messageObj.put("token", deviceToken);
-                    messageObj.put("notification", notificationObj);
+//                    messageObj.put("notification", notificationObj);
+                    messageObj.put("data", dataObj);
                     mainObj.put("message", messageObj);
                     body = RequestBody.create(mainObj.toString(), jsonMediaType);
                     break;
@@ -165,48 +177,22 @@ public class SendNotification extends AppCompatActivity {
                     return header;
                 }
             };
-
             Log.d("TAG", "sendNotification: " + objectRequest.getBody());
-
             requestQueue.add(objectRequest);
-//            Request request = new Request.Builder()
-//                    .url(fcmUrl)
-//                    .post(body)
-//                    .addHeader("Authorization", "Bearer " + token) // Replace with your server key from Firebase
-//                    .addHeader("Content-Type", "application/json")
-//                    .build();
-//
-//            Log.d("FCM Request", "Headers: " + request.headers());
-//            client.newCall(request).enqueue(new Callback() {
-//                @Override
-//                public void onFailure(Call call, IOException e) {
-//                    runOnUiThread(() -> {
-//                        Toast.makeText(SendNotification.this, "Failed to send notification: " + e, Toast.LENGTH_SHORT).show();
-//                    });
-//                }
-//
-//                @Override
-//                public void onResponse(Call call, Response response) {
-//                    runOnUiThread(() -> {
-//                        Toast.makeText(SendNotification.this, "Notification sent successfully", Toast.LENGTH_SHORT).show();
-//                    });
-//                }
-//            });
-
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d("TAG", "Excep: " + e.getLocalizedMessage());
+            Log.d("TAG", "" + e.getLocalizedMessage());
         }
     }
 
     private String getTopicName(String selectedTopic) {
-        if(selectedTopic.equals(items[1])){
+        if (selectedTopic.equals(items[1])) {
             return "demo_users";
-        }else if(selectedTopic.equals(items[2])){
+        } else if (selectedTopic.equals(items[2])) {
             return "full_users";
-        }else if(selectedTopic.equals(items[3])){
+        } else if (selectedTopic.equals(items[3])) {
             return "renewal_users";
-        }else{
+        } else {
             return "";
         }
     }

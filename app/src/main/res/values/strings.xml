@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">ShowFCM</string>
-<!--    <string name="deviceToken">cqkrW1nPTnyevKsCHtQZAa:APA91bFZsi7-wvtd1ZvA3nFxzeNJeNLVaPQuFaHDLtXq0PY-cORb0_lBkkggSwa9lF_Us7DpBS3_hOiagOwZ3WjkVH_18c_OB6bSdCIVGDk7SeUzTs1CDErs86R5VTS6xz4KLURGduvg</string>-->
-    <string name="deviceToken"> crhDuSTogCA:APA91bGoH9r_FfiAFbZH6tWL-bcXsc2QA-1U7RVspKl9BA4NAxnTnJ6htLbFG9e0P_MmOGSByvVAjAZR2T8W8GLm5ludL5WD-RiNhf28rWbf764tbAYivU4Gv_9BStGcNsc_FEGmhuLm</string>
+    <string name="deviceToken">your device token</string>
+    <string name="device_token">Device Token</string>
+    <string name="send_notification">Send Notification</string>
+    <string name="specific_device">Specific Device</string>
+    <string name="all_users">All Users</string>
+    <string name="topic">Topic</string>
+    <string name="extra_fields_key_value_key_value">Extra Fields (key:value,key:value)</string>
+    <string name="image_url">Image URL</string>
+    <string name="message">Message</string>
+    <string name="title">Title</string>
 </resources>
