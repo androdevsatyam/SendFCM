@@ -8,25 +8,26 @@
         android:id="@+id/etTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title" />
+        android:hint="@string/title" />
 
     <EditText
         android:id="@+id/etMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Message" />
+        android:hint="@string/message" />
 
     <EditText
         android:id="@+id/etImageUrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Image URL" />
+        android:hint="@string/image_url" />
 
     <EditText
         android:id="@+id/etExtraFields"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Extra Fields (JSON format)" />
+        android:maxLines="4"
+        android:hint="@string/extra_fields_key_value_key_value" />
 
     <RadioGroup
         android:id="@+id/rgNotificationType"
@@ -38,28 +39,27 @@
             android:id="@+id/rbTopic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Topic" />
+            android:text="@string/topic" />
 
         <RadioButton
             android:id="@+id/rbAllUsers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="All Users" />
+            android:text="@string/all_users" />
 
         <RadioButton
             android:id="@+id/rbSpecificDevice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Specific Device" />
+            android:text="@string/specific_device" />
     </RadioGroup>
 
     <EditText
         android:id="@+id/etDeviceToken"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Device Token"
-        android:text="@string/deviceToken"
+        android:hint="@string/device_token"
         android:visibility="gone" />
 
     <Spinner
@@ -74,5 +74,6 @@
         android:id="@+id/btnSendNotification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Notification" />
+        style="@style/ButtonThemes"
+        android:text="@string/send_notification" />
 </LinearLayout>
